@@ -9,7 +9,7 @@
 
 namespace reg {
   char registers[LED_NUM] = {
-    255, 0, 255, 0, 255, 0,
+    255, 0, 0, 0, 255, 0,
     20, 0,
     0, 0, 255, 0, 0, 255,
     4, 12,
@@ -81,6 +81,7 @@ void setup() {
 void wave(float *out, float frontSize, float backSize, float offset) {
   float at = offset;
   float size = frontSize + backSize;
+  while (at < 0) at += size;
   for (int i = 0; i < 30; i++) {
     at++;
     while (at >= size) at -= size;
