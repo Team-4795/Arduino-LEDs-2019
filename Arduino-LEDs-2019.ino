@@ -91,7 +91,7 @@ void wave(float *out, float frontSize, float backSize, float offset) {
   }
 }
 
-void setSide(int sideId) {
+void setSide(int sideId, int sideLocation, int sideSize) {
   int reg = sideId * 16;
   CRGB frontTop = reg::color(reg);
   CRGB frontBottom = reg::color(reg + 3);
@@ -103,26 +103,26 @@ void setSide(int sideId) {
   float offset = reg::position(reg + 8 + 7);
 
   if (frontSize == 0.0 && backSize == 0.0) {
-    for (int i = 0; i < 30; i++) {
-      leds[sideId * 30 + i] = CRGB::Black;
+    for (int i = 0; i < sideSize; i++) {
+      leds[sideLocation + i] = CRGB::Black;
     }
   } else if (frontSize == 0.0) {
-    for (int i = 0; i < 30; i++) {
-      CRGB back = color::blend(backTop, backBottom, i / 30.0);
-      leds[sideId * 30 + i] = color::square(back);
+    for (int i = 0; i < sideSize; i++) {
+      CRGB back = color::blend(backTop, backBottom, i / (float) sideSize);
+      leds[sideLocation + i] = color::square(back);
     }
   } else if (backSize == 0.0) {
-    for (int i = 0; i < 30; i++) {
-      CRGB front = color::blend(frontTop, frontBottom, i / 30.0);
-      leds[sideId * 30 + i] = color::square(front);
+    for (int i = 0; i < sideSize; i++) {
+      CRGB front = color::blend(frontTop, frontBottom, i / (float) sideSize);
+      leds[sideLocation + i] = color::square(front);
     }
   } else {
-    float waveScales[30];
+    float waveScales[sideSize];
     wave(waveScales, backSize, frontSize, offset);
-    for (int i = 0; i < 30; i++) {
-      CRGB front = color::blend(frontTop, frontBottom, i / 30.0);
-      CRGB back = color::blend(backTop, backBottom, i / 30.0);
-      leds[sideId * 30 + i] = color::square(color::blend(front, back, waveScales[i]));
+    for (int i = 0; i < sideSize; i++) {
+      CRGB front = color::blend(frontTop, frontBottom, i / (float) sideSize);
+      CRGB back = color::blend(backTop, backBottom, i / (float) sideSize);
+      leds[sideLocation + i] = color::square(color::blend(front, back, waveScales[i]));
     }
   }
 }
@@ -130,8 +130,8 @@ void setSide(int sideId) {
 void loop() {
   reg::update();
   
-  setSide(0);
-  setSide(1);
+  setSide(0, 0, 29);
+  setSide(1, 29, 31);
   FastLED.show();
   delay(10);
 }
